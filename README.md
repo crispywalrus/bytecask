@@ -1,6 +1,7 @@
 #### Bytecask - low latency k/v storage component ####
 
 [ ![Codeship Status for crispywalrus/bytecask](https://codeship.com/projects/b7a10f10-4b26-0132-7bb6-76839271be27/status)](https://codeship.com/projects/46645)
+[![Gitter](https://badges.gitter.im/crispywalrus/bytecask.svg)](https://gitter.im/crispywalrus/bytecask?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 * lightweight - no dependencies, no underlying storages
 * embeddable building block, no daemons, no external scripts needed
