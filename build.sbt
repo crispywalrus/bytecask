@@ -46,3 +46,5 @@ buildInfoKeys := Seq[BuildInfoKey](
   })
  
 buildInfoPackage := "flyingwalrus.bytecask"
+
+addCommandAlias("testCoverage","; clean; coverage; test")
