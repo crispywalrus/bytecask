@@ -11,14 +11,14 @@ object Benchmark {
    *   Warning: it is writing to a temp directory!
    */
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     b1()
     b2()
     b3()
     b4()
   }
 
-  def b1() {
+  def b1(): Unit = {
     println("\n--- Benchmark 1 - small values...\n")
     val dir = mkTempDir
     val db = new Bytecask(dir)
@@ -28,7 +28,7 @@ object Benchmark {
     db.destroy()
   }
 
-  def b2() {
+  def b2(): Unit = {
     println("\n--- Benchmark 2 - big values...\n")
     val dir = mkTempDir
     val db = new Bytecask(dir)
@@ -38,7 +38,7 @@ object Benchmark {
     db.destroy()
   }
 
-  def b3() {
+  def b3(): Unit = {
     println("\n--- Benchmark 3 (splitting)...\n")
     val dir = mkTempDir
     val db = new Bytecask(dir, maxFileSize = 1024 * 20)
@@ -55,7 +55,7 @@ object Benchmark {
     db.destroy()
   }
 
-  def b4() {
+  def b4(): Unit = {
     println("\n--- Benchmark 3 (merging)...\n")
     val dir = mkTempDir.getAbsolutePath
     val db = new Bytecask(dir, maxFileSize = 1024 * 10)
@@ -81,7 +81,7 @@ object Benchmark {
     db.destroy()
   }
 
-  private def putAndGet(db: Bytecask, valueSize: Int) {
+  private def putAndGet(db: Bytecask, valueSize: Int): Unit = {
     println("+ db: %s\n".format(db))
     val n = 10000
     val length = valueSize
@@ -120,7 +120,7 @@ object Benchmark {
     }
   }
 
-  private def warmup(db: Bytecask) {
+  private def warmup(db: Bytecask): Unit = {
     val bytes = randomBytes(1024)
     for (i <- 1 to 1000) db.put("test_key" + i, bytes)
     for (i <- 1 to 1000) db.get("test_key" + i)

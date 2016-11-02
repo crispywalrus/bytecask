@@ -8,9 +8,9 @@ scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % slf4jVer,
-  "org.xerial.snappy" % "snappy-java" % "1.1.2.4",
+  "org.xerial.snappy" % "snappy-java" % "1.1.2.6",
   "org.slf4j" % "slf4j-simple" % slf4jVer % Test,
-  "org.scalatest" %% "scalatest"  % "2.2.6"  % Test
+  "org.scalatest" %% "scalatest"  % "3.0.0"  % Test
 )
 
 val slf4jVer = "1.7.21"

@@ -146,6 +146,56 @@ expiration is removal based on time (TTL).
 ### Benchmark ####
 
 ```
+--- Benchmark 1 - small values...
+
++ db: 482bzKWs, /var/folders/sz/npzmr0lj5xb4s6464hpfnwtx7ypvyl/T/_1478109084429_1
+
+*** sequential put of different 10000 items: time: 142 ms, 1 op: 0.0142 ms, throughput: 70422 TPS at 8.60 MB/s, total: 1.22 MB
+*** sequential get of different 10000 items: time: 90 ms, 1 op: 0.009 ms, throughput: 111111 TPS at 13.56 MB/s, total: 1.22 MB
+*** sequential get of random items 10000 times: time: 83 ms, 1 op: 0.0083 ms, throughput: 120481 TPS at 14.71 MB/s, total: 1.22 MB
+*** sequential get of the same item 10000 times: time: 63 ms, 1 op: 0.0063 ms, throughput: 158730 TPS at 19.38 MB/s, total: 1.22 MB
+
+*** concurrent put of different 10000 items: time: 239 ms, 1 op: 0.0239 ms, throughput: 41841 TPS at 5.11 MB/s, total: 1.22 MB
+*** concurrent get of the same item 10000 times: time: 46 ms, 1 op: 0.0046 ms, throughput: 217391 TPS at 26.54 MB/s, total: 1.22 MB
+*** concurrent get of random 10000 items: time: 45 ms, 1 op: 0.0045 ms, throughput: 222222 TPS at 27.13 MB/s, total: 1.22 MB
+name: 482bzKWs, dir: /var/folders/sz/npzmr0lj5xb4s6464hpfnwtx7ypvyl/T/_1478109084429_1, uptime: 942, count: 11000, splits: 0, merges: 0
+
+--- Benchmark 2 - big values...
+
++ db: kQc51WhD, /var/folders/sz/npzmr0lj5xb4s6464hpfnwtx7ypvyl/T/_1478109085511_2
+
+*** sequential put of different 10000 items: time: 965 ms, 1 op: 0.0965 ms, throughput: 10362 TPS at 647.67 MB/s, total: 625.00 MB
+*** sequential get of different 10000 items: time: 512 ms, 1 op: 0.0512 ms, throughput: 19531 TPS at 1220.70 MB/s, total: 625.00 MB
+*** sequential get of random items 10000 times: time: 427 ms, 1 op: 0.0427 ms, throughput: 23419 TPS at 1463.70 MB/s, total: 625.00 MB
+*** sequential get of the same item 10000 times: time: 489 ms, 1 op: 0.0489 ms, throughput: 20449 TPS at 1278.12 MB/s, total: 625.00 MB
+
+*** concurrent put of different 10000 items: time: 1169 ms, 1 op: 0.1169 ms, throughput: 8554 TPS at 534.64 MB/s, total: 625.00 MB
+*** concurrent get of the same item 10000 times: time: 311 ms, 1 op: 0.0311 ms, throughput: 32154 TPS at 2009.65 MB/s, total: 625.00 MB
+*** concurrent get of random 10000 items: time: 356 ms, 1 op: 0.0356 ms, throughput: 28089 TPS at 1755.62 MB/s, total: 625.00 MB
+name: kQc51WhD, dir: /var/folders/sz/npzmr0lj5xb4s6464hpfnwtx7ypvyl/T/_1478109085511_2, uptime: 4403, count: 11000, splits: 0, merges: 0
+
+--- Benchmark 3 (splitting)...
+
+*** sequential put of different 100 items w/ frequent splits: time: 37 ms, 1 op: 0.37 ms, throughput: 2702 TPS at 5.28 MB/s, total: 0.20 MB
+Fetching entries... 
+Files in db's directory: [0,1,10,2,3,4,5,6,7,8,9]
+name: sdYx3x8e, dir: /var/folders/sz/npzmr0lj5xb4s6464hpfnwtx7ypvyl/T/_1478109089921_3, uptime: 63, count: 100, splits: 10, merges: 0
+
+--- Benchmark 3 (merging)...
+
+*** sequential put of different 100 items w/ frequent splits: time: 44 ms, 1 op: 0.44 ms, throughput: 2272 TPS at 4.44 MB/s, total: 0.20 MB
+sequential delete of random 20 items
+sequential over-put of random 20 items
+Files in db's directory: [0,1,10,11,12,13,14,15,16,17,18,19,2,20,3,4,5,6,7,8,9]
+Directory size: 209547 bytes
+Directory size: 159203 bytes
+Reduction: 209547 | 159203 -> 24.03%
+name: ToTEaCHt, dir: /var/folders/sz/npzmr0lj5xb4s6464hpfnwtx7ypvyl/T/_1478109089992_4, uptime: 188, count: 80, splits: 20, merges: 1
+```
+
+older
+
+```
 Date: 5/4/2013
 Hardware: Intel Core 2 Quad CPU Q6600@2.40GHz, SSD disk
 OS: Ubuntu 12.10, 3.2.0-41-generic x86_64

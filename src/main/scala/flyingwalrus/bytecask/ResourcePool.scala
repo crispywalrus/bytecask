@@ -3,13 +3,15 @@ package flyingwalrus.bytecask
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit, ConcurrentLinkedQueue, Semaphore}
 import java.io.RandomAccessFile
 import scala.collection.JavaConversions._
+import scala.reflect.{ClassTag, classTag}
+import scala.util.{Try,Success,Failure}
 
 /**
  * Instead of creating a RandomAccessFile per each reading thread the idea
  * is to keep a pool of readers per each file and reuse it keeping it open.
  * This avoids costly file handlers creation for the same files.
  */
-abstract class ResourcePool[T <: {def close()}](maxResources: Int) {
+abstract class ResourcePool[T <: {def close(): Unit} : ClassTag](maxResources: Int) {
 
   private final val semaphore = new Semaphore(maxResources, true)
 
@@ -20,31 +22,28 @@ abstract class ResourcePool[T <: {def close()}](maxResources: Int) {
   def get(maxWaitMillis: Long): T = {
     semaphore.tryAcquire(maxWaitMillis, TimeUnit.MILLISECONDS)
     resources.poll() match {
-      case r: T => r
-      case _ => {
-        try {
-          createResource()
-        } catch {
-          case e: Exception => throw new RuntimeException("Cannot create resource", e)
+      case r if classTag[T].runtimeClass.isInstance(r) => r
+      case _ =>
+        val create = Try { createResource() }
+        semaphore.release()
+        create match {
+          case Failure(ex) => throw new RuntimeException("Cannot create resource", ex)
+          case Success(t) => t
         }
-        finally {
-          semaphore.release()
-        }
-      }
     }
   }
 
-  def release(resource: T) {
+  def release(resource: T): Unit = {
     resources.add(resource)
     semaphore.release()
   }
 
-  def destroy() {
+  def destroy(): Unit = {
     resources.foreach(_.close())
   }
 }
 
-abstract class FileReadersPool[T <: {def close()}](maxReaders: Int) {
+abstract class FileReadersPool[T <: {def close(): Unit} : ClassTag](maxReaders: Int) {
 
   private val cache = new ConcurrentHashMap[String, ResourcePool[T]]()
 
@@ -62,20 +61,20 @@ abstract class FileReadersPool[T <: {def close()}](maxReaders: Int) {
     pool.get(1000)
   }
 
-  def release(file: String, reader: T) {
+  def release(file: String, reader: T): Unit = {
     cache.get(file).release(reader)
   }
 
   def createReader(file: String): T
 
-  def invalidate(file: String) {
+  def invalidate(file: String): Unit = {
     cache.get(file) match {
       case pool: ResourcePool[T] => pool.destroy()
       case _ => cache.remove(file)
     }
   }
 
-  def destroy() {
+  def destroy(): Unit = {
     cache.foreach(_._2.destroy())
   }
 }
