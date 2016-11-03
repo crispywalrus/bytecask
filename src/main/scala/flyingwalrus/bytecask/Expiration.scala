@@ -10,7 +10,7 @@ trait Expiration {
 
   val ttl: Int //Seconds !
 
-  def performExpiration() {
+  def performExpiration() = {
     for (key <- bytecask.keys())
       for (meta <- bytecask.getMetadata(key))
         if (Utils.timestamp - meta.timestamp >= ttl)

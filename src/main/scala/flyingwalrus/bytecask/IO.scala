@@ -43,7 +43,7 @@ object IO extends Logging {
     appender.getFilePointer
   }
 
-  def appendHintEntry(appender: RandomAccessFile, timestamp: Int, keySize: Int, valueSize: Int, pos: Int, key: Array[Byte]) {
+  def appendHintEntry(appender: RandomAccessFile, timestamp: Int, keySize: Int, valueSize: Int, pos: Int, key: Array[Byte]) = {
     val buffer = ByteBuffer.allocate(4 + 2 + 4 + 4 + keySize)
     putInt32(buffer, timestamp, 0)
     putInt16(buffer, keySize, 4)
@@ -60,7 +60,7 @@ object IO extends Logging {
   */
 
   def readDataEntry(reader: RandomAccessFile, entry: IndexEntry) = {
-    reader.seek(entry.pos)
+    reader.seek(entry.pos.toLong)
     val buffer = ByteBuffer.allocate(entry.length)
     val read = reader.getChannel.read(buffer)
     buffer.flip()
@@ -184,7 +184,7 @@ Iterative non-indexed hint entry read
   private def readUInt16(a: Byte, b: Byte) = (a & 0xFF) << 8 | (b & 0xFF) << 0
 
   @inline
-  private def putInt32(buffer: ByteBuffer, value: Int, index: Int = 0) {
+  private def putInt32(buffer: ByteBuffer, value: Int, index: Int = 0) = {
     buffer.put(index, (value >>> 24).toByte)
     buffer.put(index + 1, (value >>> 16).toByte)
     buffer.put(index + 2, (value >>> 8).toByte)
@@ -192,7 +192,7 @@ Iterative non-indexed hint entry read
   }
 
   @inline
-  private def putInt32(buffer: ByteBuffer, value: Long, index: Int) {
+  private def putInt32(buffer: ByteBuffer, value: Long, index: Int) = {
     buffer.put(index, (value >>> 24).toByte)
     buffer.put(index + 1, (value >>> 16).toByte)
     buffer.put(index + 2, (value >>> 8).toByte)
@@ -200,7 +200,7 @@ Iterative non-indexed hint entry read
   }
 
   @inline
-  private def putInt16(buffer: ByteBuffer, value: Int, index: Int = 0) {
+  private def putInt16(buffer: ByteBuffer, value: Int, index: Int = 0) = {
     buffer.put(index, (value >>> 8).toByte)
     buffer.put(index + 1, value.toByte)
   }
@@ -246,7 +246,7 @@ final class IO(val dir: String, maxConcurrentReaders: Int = 10) extends Closeabl
     (dir / next).mkFile
   }
 
-  def close() {
+  def close() = {
     readers.destroy()
     appender.close()
   }

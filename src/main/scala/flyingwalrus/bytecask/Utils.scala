@@ -35,7 +35,7 @@ object Utils {
     (s take k) mkString
   }
 
-  def rmdir(dir: String) {
+  def rmdir(dir: String) = {
     if (System.getProperty("os.name") == "Linux") {
       Runtime.getRuntime.exec("rm -rf " + dir).waitFor()
     } //TODO
@@ -58,7 +58,7 @@ object Utils {
     size
   }
 
-  def mkDirIfNeeded(dir: String) {
+  def mkDirIfNeeded(dir: String) = {
     if (!dir.mkFile.exists()) dir.mkFile.mkdirs()
   }
 
@@ -102,7 +102,7 @@ object Utils {
   @inline
   def processorsNum = Runtime.getRuntime.availableProcessors()
 
-  def checkArgument(condition: Boolean, message: String) {
+  def checkArgument(condition: Boolean, message: String) = {
     if (!condition) throw new IllegalArgumentException(message)
   }
 
@@ -110,7 +110,7 @@ object Utils {
     throw new RuntimeException("Not yet implemented")
   }
 
-  def withResource[X <: {def close()}, A](resource: X)(f: X => A) = {
+  def withResource[X <: {def close(): Unit}, A](resource: X)(f: X => A) = {
     try {
       f(resource)
     } finally {

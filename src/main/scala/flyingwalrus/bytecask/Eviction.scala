@@ -14,7 +14,7 @@ trait Eviction {
     If there are items beyond the limit, find the oldest and remove
  */
 
-  def performEviction() {
+  def performEviction() = {
     if (maxCount > 0) {
       val toEvict = bytecask.count() - maxCount
       if (toEvict > 0) {

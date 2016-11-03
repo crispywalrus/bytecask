@@ -15,14 +15,14 @@ final class Index(io: IO, prefixedKeys: Boolean = false) extends Logging with Lo
 
   val indexMap = if (prefixedKeys) new PrefixIndexMap else Map[Bytes, IndexEntry]()
 
-  def init() {
+  def init() = {
     synchronized {
       debug("Initializing index...")
       if (ls(io.dir).toList.filter(_.length() > 0).map(readData).filter(!_).size > 0) incErrors
     }
   }
 
-  def close() {
+  def close() = {
     synchronized {
       indexMap.clear()
     }
@@ -65,7 +65,7 @@ final class Index(io: IO, prefixedKeys: Boolean = false) extends Logging with Lo
     indexMap.remove(key)
   }
 
-  def postSplit(file: String) {
+  def postSplit(file: String) = {
     writeLock {
       for ((key, entry) <- indexMap; if (entry.isActive)) {
         indexMap.put(key, IndexEntry(file, entry.pos, entry.length, entry.timestamp))

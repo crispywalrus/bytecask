@@ -33,11 +33,11 @@ trait StateAware {
     f
   }
 
-  def resetState() {
+  def resetState() = {
     state.set(Unmodified)
   }
 
-  def putDone() {
+  def putDone() = {
     val newState = state.get match {
       case Unmodified => AfterPut
       case AfterDelete => AfterPutAndDelete
@@ -46,7 +46,7 @@ trait StateAware {
     state.set(newState)
   }
 
-  def deleteDone() {
+  def deleteDone() = {
     val newState = state.get match {
       case Unmodified => AfterDelete
       case AfterPut => AfterPutAndDelete

@@ -15,14 +15,14 @@ final class Merger(io: IO, index: Index) extends Logging {
 
   import flyingwalrus.bytecask.Utils._
 
-  def addReclaim(entry: IndexEntry) {
+  def addReclaim(entry: IndexEntry) = {
     reclaims.synchronized {
       val delta = reclaims.getOrElseUpdate(entry.file, Delta(0, entry.length))
       reclaims.put(entry.file, Delta(delta.entries + 1, delta.length + entry.length))
     }
   }
 
-  def mergeIfNeeded(dataThreshold: Int) {
+  def mergeIfNeeded(dataThreshold: Int) = {
     debug("Checking reclaims: " + reclaims)
     val files = for (
       (file, delta) <- reclaims
@@ -74,13 +74,13 @@ final class Merger(io: IO, index: Index) extends Logging {
     }
   }
 
-  private def replaceFile(a: String, b: String) {
+  private def replaceFile(a: String, b: String) = {
     for ((k, v) <- index.getMap) {
       if (v.file == a) index.getMap.put(k, IndexEntry(b, v.pos, v.length, v.timestamp))
     }
   }
 
-  def forceMerge() {
+  def forceMerge() = {
     merge(ls(io.dir).map(_.getName).filter(_ != IO.ACTIVE_FILE_NAME).map(_.toInt).sortWith(_ < _).map(_.toString))
   }
 

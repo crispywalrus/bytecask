@@ -4,9 +4,16 @@ import flyingwalrus.bytecask.Utils._
 import flyingwalrus.bytecask.Bytes._
 import java.util.concurrent.atomic.AtomicInteger
 
-class Bytecask(val dir: String, val name: String = Utils.randomString(8), maxFileSize: Long = IO.DEFAULT_MAX_FILE_SIZE,
-               maxConcurrentReaders: Int = 10, prefixedKeys: Boolean = false)
-  extends Logging with StateAware with Processors {
+class Bytecask(
+  val dir: String,
+  val name: String = Utils.randomString(8),
+  maxFileSize: Long = IO.DEFAULT_MAX_FILE_SIZE.toLong,
+  maxConcurrentReaders: Int = 10,
+  prefixedKeys: Boolean = false
+) extends Logging
+    with StateAware
+    with Processors {
+
   val bytecask = this
   mkDirIfNeeded(dir)
   val io = new IO(dir, maxConcurrentReaders)
@@ -18,7 +25,7 @@ class Bytecask(val dir: String, val name: String = Utils.randomString(8), maxFil
 
   index.init()
 
-  def put(key: Array[Byte], value: Array[Byte]) {
+  def put(key: Array[Byte], value: Array[Byte]) = {
     access {
       checkArgument(key.length > 0, "Key must not be empty")
       checkArgument(value.length > 0, "Value must not be empty")
@@ -44,7 +51,7 @@ class Bytecask(val dir: String, val name: String = Utils.randomString(8), maxFil
   def getMetadata(key: Array[Byte]) = access {
     checkArgument(key.length > 0, "Key must not be empty")
     index.get(key) match {
-      case Some(entry) => Some(EntryMetadata(entry.length, entry.timestamp))
+      case Some(entry) => Some(EntryMetadata(entry.length, entry.timestamp.toLong))
       case _ => None
     }
   }
@@ -63,11 +70,11 @@ class Bytecask(val dir: String, val name: String = Utils.randomString(8), maxFil
     }
   }
 
-  def close() {
+  def close() = {
     io.close()
   }
 
-  def destroy() {
+  def destroy() = {
     close()
     rmdir(dir)
   }
@@ -79,14 +86,14 @@ class Bytecask(val dir: String, val name: String = Utils.randomString(8), maxFil
       .format(name, dir, now - createdAt, count(), splits.get(), merger.mergesCount)
   }
 
-  protected def split() {
+  protected def split() = {
     synchronized {
       index.postSplit(io.split())
     }
     splits.incrementAndGet()
   }
 
-  def merge() {
+  def merge() = {
     synchronized {
       merger.forceMerge()
     }
@@ -123,12 +130,12 @@ class Bytecask(val dir: String, val name: String = Utils.randomString(8), maxFil
     }
   }
 
-  def passivate() {
+  def passivate() = {
     index.close()
     active.set(false)
   }
 
-  def activate() {
+  def activate() = {
     index.init()
     active.set(true)
   }

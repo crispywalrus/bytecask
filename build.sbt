@@ -5,28 +5,45 @@ name := "bytecask"
 licenses += ("ASL-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 scalaVersion := "2.11.8"
+crossScalaVersions := Seq("2.11.8","2.12.0")
 
 libraryDependencies ++= Seq(
-  "org.slf4j" % "slf4j-api" % slf4jVer,
-  "org.xerial.snappy" % "snappy-java" % "1.1.2.6",
-  "org.slf4j" % "slf4j-simple" % slf4jVer % Test,
-  "org.scalatest" %% "scalatest"  % "3.0.0"  % Test
+  slf4j("api"),
+  snappy,
+  slf4j("simple") % Test,
+  scalatest % Test
 )
 
-val slf4jVer = "1.7.21"
-
-scalacOptions ++= Seq(
+val compilerOptions = Seq(
   "-encoding", "utf8",
   "-feature",
   "-language:_",
   "-deprecation",
   "-optimise",
-  "-Yinline-warnings",
-  "-Ybackend:GenBCode",
+  "-Ywarn-unused-import",
   "-Ydelambdafy:method",
-  "-target:jvm-1.8",
-  "-Yopt:l:classpath"
+  "-Ywarn-dead-code",
+  "-Ywarn-numeric-widen",
+  "-Xfuture",
+  "-target:jvm-1.8"
 )
+
+scalacOptions ++= compilerOptions ++ (
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2,p)) if p < 12 => Seq(
+      "-Ybackend:GenBCode",
+      "-Yopt:l:classpath")
+    case _ => Nil
+  }
+)
+
+scalacOptions in (Compile, console) ~= {
+    _.filterNot(Set("-Ywarn-unused-import"))
+}
+
+scalacOptions in (Test, console) ~= {
+  _.filterNot(Set("-Ywarn-unused-import"))
+}
 
 fork in run := true
 
@@ -48,3 +65,7 @@ buildInfoKeys := Seq[BuildInfoKey](
 buildInfoPackage := "flyingwalrus.bytecask"
 
 addCommandAlias("testCoverage","; clean; coverage; test; coverageReport")
+
+def slf4j(name: String) = "org.slf4j" % s"slf4j-$name" % "1.7.21"
+def snappy = "org.xerial.snappy" % "snappy-java" % "1.1.2.6"
+def scalatest = "org.scalatest" %% "scalatest"  % "3.0.0"

@@ -56,12 +56,8 @@ class ConcurrentSuite extends FunSuite with Matchers with BeforeAndAfterEach wit
     db.count() should be(iters + 1)
   }
 
-  override def beforeEach() {
-    db = new Bytecask(mkTempDir)
-  }
+  override def beforeEach() = db = new Bytecask(mkTempDir)
 
-  override def afterEach() {
-    db.destroy()
-  }
+  override def afterEach() = db.destroy()
 
 }

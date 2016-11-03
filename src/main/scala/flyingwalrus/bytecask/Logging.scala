@@ -16,23 +16,23 @@ trait Logging {
 
   private lazy val logger = LoggerFactory.getLogger(this.getClass.getName)
 
-  final def debug(fmt: => String, arg: Any, argN: Any*) {
+  final def debug(fmt: => String, arg: Any, argN: Any*): Unit = {
     debug(message(fmt, arg, argN: _*))
   }
 
-  final def debug(msg: => String) {
+  final def debug(msg: => String): Unit = {
     if (debug_?) logger debug msg
   }
 
-  final def info(msg: => String) {
+  final def info(msg: => String) = {
     if (info_?) logger info msg
   }
 
-  final def warn(msg: => String) {
+  final def warn(msg: => String) = {
     if (warning_?) logger warn msg
   }
 
-  final def error(msg: => String) {
+  final def error(msg: => String) = {
     if (error_?) logger error msg
   }
 

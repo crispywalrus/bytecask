@@ -2,7 +2,7 @@ package flyingwalrus.bytecask
 
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit, ConcurrentLinkedQueue, Semaphore}
 import java.io.RandomAccessFile
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.reflect.{ClassTag, classTag}
 import scala.util.{Try,Success,Failure}
 
@@ -34,12 +34,12 @@ abstract class ResourcePool[T <: {def close(): Unit} : ClassTag](maxResources: I
   }
 
   def release(resource: T): Unit = {
-    resources.add(resource)
-    semaphore.release()
+    resources add(resource)
+    semaphore release()
   }
 
   def destroy(): Unit = {
-    resources.foreach(_.close())
+    resources.asScala.foreach(_.close())
   }
 }
 
@@ -75,7 +75,7 @@ abstract class FileReadersPool[T <: {def close(): Unit} : ClassTag](maxReaders: 
   }
 
   def destroy(): Unit = {
-    cache.foreach(_._2.destroy())
+    cache.asScala.foreach(_._2.destroy())
   }
 }
 

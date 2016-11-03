@@ -24,7 +24,7 @@ trait BlobStore {
     totalRead
   }
 
-  def retrieveBlob(name: String, os: OutputStream) {
+  def retrieveBlob(name: String, os: OutputStream): Unit = {
     bytecask.get(key(name)) match {
       case Some(descriptor) =>
         val buffer = ByteBuffer.wrap(descriptor)
@@ -53,7 +53,7 @@ trait BlobStore {
 
   private def key(name: String, i: Int): String = key(name) + "_" + i
 
-  private def storeDescriptor(name: String, blocks: Int, length: Long) {
+  private def storeDescriptor(name: String, blocks: Int, length: Long) = {
     val value = ByteBuffer.allocate(12).putInt(blocks).putLong(length).array()
     bytecask.put(key(name), value)
   }

@@ -13,11 +13,11 @@ trait JmxSupport {
 
   lazy val server = ManagementFactory.getPlatformMBeanServer
 
-  def jmxInit() {
+  def jmxInit() = {
     server.registerMBean(new BytecaskJmx(bytecask), beanName)
   }
 
-  def jmxDestroy() {
+  def jmxDestroy() = {
     server.unregisterMBean(beanName)
   }
 }
