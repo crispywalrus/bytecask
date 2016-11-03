@@ -19,7 +19,6 @@ val compilerOptions = Seq(
   "-feature",
   "-language:_",
   "-deprecation",
-  "-optimise",
   "-Ywarn-unused-import",
   "-Ydelambdafy:method",
   "-Ywarn-dead-code",
@@ -31,9 +30,12 @@ val compilerOptions = Seq(
 scalacOptions ++= compilerOptions ++ (
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2,p)) if p < 12 => Seq(
+      "-optimise",
       "-Ybackend:GenBCode",
       "-Yopt:l:classpath")
-    case _ => Nil
+    case _ => Seq(
+      "-opt:l:classpath"
+    )
   }
 )
 
